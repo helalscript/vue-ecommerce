@@ -16,7 +16,7 @@ return new class extends Migration
             $table->dateTime('delivery_date');
             $table->integer('recipient');
             $table->integer('address');
-            $table->integer('status');
+            $table->enum('status', ['pending', 'processing','shipped','delivered','cancelled'])->default('pending');
             $table->unsignedBigInteger('order_id');
             $table->timestamps();
         });

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->dateTime('order_date');
-            $table->decimal('total_price', 10, 2);
+            $table->decimal('total_price', 10,2);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('payment_id');
             $table->timestamps();

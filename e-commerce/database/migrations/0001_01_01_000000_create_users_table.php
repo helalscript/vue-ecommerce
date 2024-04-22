@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->string('email', 100)->unique();
             $table->string('address', 100);
-            $table->string('phone_number');
+            $table->string('phone_number',100);
             $table->string('bank_info');
             $table->unsignedBigInteger('role_id');
             $table->timestamp('email_verified_at')->nullable();

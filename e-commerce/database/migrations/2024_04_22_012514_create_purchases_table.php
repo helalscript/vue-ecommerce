@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('date');
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('user_id');
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 10,2);
             $table->timestamps();
         });
     }
