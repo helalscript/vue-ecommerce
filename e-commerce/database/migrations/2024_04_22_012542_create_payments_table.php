@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->dateTime('date');
             $table->string('method', 100);
-            $table->decimal('amount', 10, 2);
+            $table->decimal('amount', 10,2);
             $table->enum('status', ['complete', 'pending'])->default('pending');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
@@ -23,7 +23,7 @@ return new class extends Migration
     }
    
     /**
-     * Reverse the migrations.
+     * Reverse the migrations.z
      */
     public function down(): void
     {
