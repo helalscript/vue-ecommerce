@@ -15,8 +15,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users=User::orderBy('id','desc')->get();
-        return $this->sendResponse($users,'User list fetched successfully!');
+        $users = User::orderBy('id', 'desc')->get();
+        return $this->sendResponse($users, 'User list fetched successfully!');
     }
 
     /**
@@ -35,13 +35,16 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|unique:users',
             'name' => 'required',
-            'password' => 'required|min:8',
+            "address" => 'required',
+            "phone_number" => 'required',
+            "bank_info" => 'required',
+            "role_id" => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $input['password']=bcrypt($request->password);
+        $input['password'] = bcrypt($request->password);
         $user = User::create($input);
         return $this->sendResponse($user, 'User created successfully!');
     }
@@ -51,7 +54,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        
+
     }
 
     /**
@@ -59,8 +62,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $users=User::find($id);
-        return $this->sendResponse($users,'User fetched successfully!');
+        $users = User::find($id);
+        return $this->sendResponse($users, 'User fetched successfully!');
     }
 
     /**
@@ -70,15 +73,19 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|unique:users',
-            'name' => 'required'
+            'name' => 'required',
+            "address" => 'required',
+            "phone_number" => 'required',
+            "bank_info" => 'required',
+            "role_id" => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        if(!empty($request->password)){
-            $input['password']=bcrypt($request->password);
-        }else{
+        if (!empty($request->password)) {
+            $input['password'] = bcrypt($request->password);
+        } else {
             unset($input['password']);
         }
         $user = User::find($id)->update($input);
@@ -90,7 +97,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $users=User::find($id)->delete();
-        return $this->sendResponse($users,'User deleted successfully!');
+        $users = User::find($id)->delete();
+        return $this->sendResponse($users, 'User deleted successfully!');
     }
 }

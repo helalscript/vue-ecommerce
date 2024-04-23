@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Products;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 class ProductsController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $roles=Role::orderBy('id','desc')->with('')->get();
+        return $this->sendResponse($roles,'Role list fetched successfully!');
+    
     }
 
     /**
@@ -28,13 +31,21 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $roles=Role::create($input);
+        return $this->sendResponse($roles, 'Role created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Products $products)
+    public function show(Role $role)
     {
         //
     }
@@ -42,24 +53,35 @@ class ProductsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Products $products)
+    public function edit(string $id)
     {
-        //
+        $roles=Role::find($id);
+        return $this->sendResponse($roles,'Role fetched successfully!');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Products $products)
+    public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $roles = Role::find($id)->update($input);
+        return $this->sendResponse($roles, 'Role updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $products)
+    public function destroy(string $id)
     {
-        //
+        $roles = Role::find($id)->delete();
+        return $this->sendResponse($roles,'Role deleted successfully!');
     }
 }
+

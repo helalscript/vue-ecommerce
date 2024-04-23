@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Shipment;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 class ShipmentController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $shipment=Shipment::orderBy('id','desc')->with('')->get();
+        return $this->sendResponse($shipment,'Shipment list fetched successfully!');
+    
     }
 
     /**
@@ -28,13 +31,21 @@ class ShipmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $shipment=Shipment::create($input);
+        return $this->sendResponse($shipment, 'Shipment created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Shipment $shipment)
+    public function show(string $id)
     {
         //
     }
@@ -42,24 +53,35 @@ class ShipmentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Shipment $shipment)
+    public function edit(string $id)
     {
-        //
+        $shipment=Shipment::find($id);
+        return $this->sendResponse($shipment,'Shipment fetched successfully!');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Shipment $shipment)
+    public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $shipment = Shipment::find($id)->update($input);
+        return $this->sendResponse($shipment, 'Shipment updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Shipment $shipment)
+    public function destroy(string $id)
     {
-        //
+        $shipment = Shipment::find($id)->delete();
+        return $this->sendResponse($shipment,'Shipment deleted successfully!');
     }
 }
+

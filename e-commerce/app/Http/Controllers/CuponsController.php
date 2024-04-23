@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Cupons;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 class CuponsController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $roles=Role::orderBy('id','desc')->with('')->get();
+        return $this->sendResponse($roles,'Role list fetched successfully!');
+    
     }
 
     /**
@@ -28,13 +31,21 @@ class CuponsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $roles=Role::create($input);
+        return $this->sendResponse($roles, 'Role created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Cupons $cupons)
+    public function show(Role $role)
     {
         //
     }
@@ -42,24 +53,34 @@ class CuponsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cupons $cupons)
+    public function edit(string $id)
     {
-        //
+        $roles=Role::find($id);
+        return $this->sendResponse($roles,'Role fetched successfully!');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cupons $cupons)
+    public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $roles = Role::find($id)->update($input);
+        return $this->sendResponse($roles, 'Role updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cupons $cupons)
+    public function destroy(string $id)
     {
-        //
+        $roles = Role::find($id)->delete();
+        return $this->sendResponse($roles,'Role deleted successfully!');
     }
 }
