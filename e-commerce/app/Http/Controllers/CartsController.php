@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class CartsController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */

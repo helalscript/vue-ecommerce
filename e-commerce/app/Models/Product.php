@@ -16,7 +16,7 @@ class Product extends Model
         return $this->belongsTo(Sub_category::class);
     }
     public function wishlist(){
-        return $this->belongsTo(Sub_category::class);
+        return $this->hasMany(Wishlist::class);
     }
     public function order_item(){
         return $this->belongsTo(Order_item::class);

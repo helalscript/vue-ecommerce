@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $roles=Role::orderBy('id','desc')->with('user')->get();
+        return $this->sendResponse($roles,'Role list fetched successfully!');
+    
     }
 
     /**
