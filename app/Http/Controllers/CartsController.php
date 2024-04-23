@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Carts;
+use App\Models\Cart;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 class CartsController extends Controller
 {
     use ApiResponse;
@@ -13,7 +13,9 @@ class CartsController extends Controller
      */
     public function index()
     {
-        //
+        $carts=Cart::orderBy('id','desc')->with('product','user')->get();
+        return $this->sendResponse($carts,'Cart list fetched successfully!');
+    
     }
 
     /**
@@ -29,38 +31,57 @@ class CartsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $carts=Cart::create($input);
+        return $this->sendResponse($carts, 'Cart created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Carts $carts)
+    public function show(string $id)
     {
-        //
+        $carts=Cart::with('product','user')->find($id);
+        return $this->sendResponse($carts,'Cart fetched successfully!');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Carts $carts)
+    public function edit(string $id)
     {
-        //
+        $carts=Cart::find($id);
+        return $this->sendResponse($carts,'Cart fetched successfully!');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Carts $carts)
+    public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors(),422);
+        }
+        $input = $request->all();
+        $carts = Cart::find($id)->update($input);
+        return $this->sendResponse($carts, 'Cart updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Carts $carts)
+    public function destroy(string $id)
     {
-        //
+        $carts = Cart::find($id)->delete();
+        return $this->sendResponse($carts,'Cart deleted successfully!');
     }
 }

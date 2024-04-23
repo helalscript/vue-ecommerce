@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Shipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class ShipmentController extends Controller
 {
     use ApiResponse;
@@ -13,9 +14,9 @@ class ShipmentController extends Controller
      */
     public function index()
     {
-        $shipment=Shipment::orderBy('id','desc')->with('')->get();
-        return $this->sendResponse($shipment,'Shipment list fetched successfully!');
-    
+        $shipment = Shipment::orderBy('id', 'desc')->with('order')->get();
+        return $this->sendResponse($shipment, 'Shipment list fetched successfully!');
+
     }
 
     /**
@@ -32,13 +33,17 @@ class ShipmentController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'delivery_date' => 'required',
+            'recipient' => 'required',
+            'address' => 'required',
+            'status' => 'required',
+            'orders_id' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $shipment=Shipment::create($input);
+        $shipment = Shipment::create($input);
         return $this->sendResponse($shipment, 'Shipment created successfully!');
     }
 
@@ -47,7 +52,9 @@ class ShipmentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $shipment = Shipment::with('order')->find($id);
+        return $this->sendResponse($shipment, 'Shipment list fetched successfully!');
+
     }
 
     /**
@@ -55,8 +62,8 @@ class ShipmentController extends Controller
      */
     public function edit(string $id)
     {
-        $shipment=Shipment::find($id);
-        return $this->sendResponse($shipment,'Shipment fetched successfully!');
+        $shipment = Shipment::with('order')->find($id);
+        return $this->sendResponse($shipment, 'Shipment list fetched successfully!');
     }
 
     /**
@@ -65,10 +72,14 @@ class ShipmentController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'delivery_date' => 'required',
+            'recipient' => 'required',
+            'address' => 'required',
+            'status' => 'required',
+            'orders_id' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
         $shipment = Shipment::find($id)->update($input);
@@ -81,7 +92,7 @@ class ShipmentController extends Controller
     public function destroy(string $id)
     {
         $shipment = Shipment::find($id)->delete();
-        return $this->sendResponse($shipment,'Shipment deleted successfully!');
+        return $this->sendResponse($shipment, 'Shipment deleted successfully!');
     }
 }
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Coupon_usages;
+use App\Models\Coupon_usage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,9 +14,9 @@ class CouponUsagesController extends Controller
      */
     public function index()
     {
-        $roles=Role::orderBy('id','desc')->with('')->get();
-        return $this->sendResponse($roles,'Role list fetched successfully!');
-    
+        $coupon_usages = Coupon_usage::orderBy('id', 'desc')->with('user', 'cupon')->get();
+        return $this->sendResponse($coupon_usages, 'Coupon_usage list fetched successfully!');
+
     }
 
     /**
@@ -33,22 +33,26 @@ class CouponUsagesController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'usage_count' => 'required',
+            'user_id' => 'required',
+            'cupons_id' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles=Role::create($input);
-        return $this->sendResponse($roles, 'Role created successfully!');
+        $coupon_usages = Coupon_usage::create($input);
+        return $this->sendResponse($coupon_usages, 'Coupon_usage created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(string $id)
     {
-        //
+        $coupon_usages = Coupon_usage::with('user', 'cupon')->find($id);
+        return $this->sendResponse($coupon_usages, 'Coupon_usage list fetched successfully!');
+
     }
 
     /**
@@ -56,8 +60,8 @@ class CouponUsagesController extends Controller
      */
     public function edit(string $id)
     {
-        $roles=Role::find($id);
-        return $this->sendResponse($roles,'Role fetched successfully!');
+        $coupon_usages = Coupon_usage::find($id);
+        return $this->sendResponse($coupon_usages, 'Coupon_usage fetched successfully!');
     }
 
     /**
@@ -66,14 +70,16 @@ class CouponUsagesController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'usage_count' => 'required',
+            'user_id' => 'required',
+            'cupons_id' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles = Role::find($id)->update($input);
-        return $this->sendResponse($roles, 'Role updated successfully!');
+        $coupon_usages = Coupon_usage::find($id)->update($input);
+        return $this->sendResponse($coupon_usages, 'Coupon_usage updated successfully!');
     }
 
     /**
@@ -81,7 +87,7 @@ class CouponUsagesController extends Controller
      */
     public function destroy(string $id)
     {
-        $roles = Role::find($id)->delete();
-        return $this->sendResponse($roles,'Role deleted successfully!');
+        $coupon_usages = Coupon_usage::find($id)->delete();
+        return $this->sendResponse($coupon_usages, 'Coupon_usage deleted successfully!');
     }
 }

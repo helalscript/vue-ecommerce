@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payments;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class PaymentsController extends Controller
 {
     use ApiResponse;
@@ -13,9 +14,9 @@ class PaymentsController extends Controller
      */
     public function index()
     {
-        $roles=Role::orderBy('id','desc')->with('')->get();
-        return $this->sendResponse($roles,'Role list fetched successfully!');
-    
+        $payments = Payment::orderBy('id', 'desc')->with('user','order')->get();
+        return $this->sendResponse($payments, 'Payment list fetched successfully!');
+
     }
 
     /**
@@ -32,22 +33,29 @@ class PaymentsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'date' => 'required',
+            'method' => 'required',
+            'amount' => 'required',
+            'status' => 'required',
+            'users_id' => 'required',
+
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles=Role::create($input);
-        return $this->sendResponse($roles, 'Role created successfully!');
+        $payments = Payment::create($input);
+        return $this->sendResponse($payments, 'Payment created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(string $id)
     {
-        //
+        $payments = Payment::orderBy('id', 'desc')->with('user','order')->find($id);
+        return $this->sendResponse($payments, 'Payment list fetched successfully!');
+
     }
 
     /**
@@ -55,8 +63,8 @@ class PaymentsController extends Controller
      */
     public function edit(string $id)
     {
-        $roles=Role::find($id);
-        return $this->sendResponse($roles,'Role fetched successfully!');
+        $payments = Payment::find($id);
+        return $this->sendResponse($payments, 'Payment fetched successfully!');
     }
 
     /**
@@ -65,14 +73,18 @@ class PaymentsController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'date' => 'required',
+            'method' => 'required',
+            'amount' => 'required',
+            'status' => 'required',
+            'users_id' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles = Role::find($id)->update($input);
-        return $this->sendResponse($roles, 'Role updated successfully!');
+        $payments = Payment::find($id)->update($input);
+        return $this->sendResponse($payments, 'Payment updated successfully!');
     }
 
     /**
@@ -80,8 +92,8 @@ class PaymentsController extends Controller
      */
     public function destroy(string $id)
     {
-        $roles = Role::find($id)->delete();
-        return $this->sendResponse($roles,'Role deleted successfully!');
+        $payments = Payment::find($id)->delete();
+        return $this->sendResponse($payments, 'Payment deleted successfully!');
     }
 }
 

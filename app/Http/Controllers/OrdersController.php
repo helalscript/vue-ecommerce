@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Orders;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 class OrdersController extends Controller
@@ -13,8 +13,8 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        $roles=Role::orderBy('id','desc')->with('')->get();
-        return $this->sendResponse($roles,'Role list fetched successfully!');
+        $orders=Order::orderBy('id','desc')->with('')->get();
+        return $this->sendResponse($orders,'Order list fetched successfully!');
     
     }
 
@@ -38,14 +38,14 @@ class OrdersController extends Controller
             return $this->sendError('Validation Error.', $validator->errors(),422);
         }
         $input = $request->all();
-        $roles=Role::create($input);
-        return $this->sendResponse($roles, 'Role created successfully!');
+        $orders=Order::create($input);
+        return $this->sendResponse($orders, 'Order created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(Order $Order)
     {
         //
     }
@@ -55,8 +55,8 @@ class OrdersController extends Controller
      */
     public function edit(string $id)
     {
-        $roles=Role::find($id);
-        return $this->sendResponse($roles,'Role fetched successfully!');
+        $orders=Order::find($id);
+        return $this->sendResponse($orders,'Order fetched successfully!');
     }
 
     /**
@@ -71,8 +71,8 @@ class OrdersController extends Controller
             return $this->sendError('Validation Error.', $validator->errors(),422);
         }
         $input = $request->all();
-        $roles = Role::find($id)->update($input);
-        return $this->sendResponse($roles, 'Role updated successfully!');
+        $orders = Order::find($id)->update($input);
+        return $this->sendResponse($orders, 'Order updated successfully!');
     }
 
     /**
@@ -80,7 +80,7 @@ class OrdersController extends Controller
      */
     public function destroy(string $id)
     {
-        $roles = Role::find($id)->delete();
-        return $this->sendResponse($roles,'Role deleted successfully!');
+        $orders = Order::find($id)->delete();
+        return $this->sendResponse($orders,'Order deleted successfully!');
     }
 }

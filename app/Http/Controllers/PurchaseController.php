@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class PurchaseController extends Controller
 {
     use ApiResponse;
@@ -13,9 +14,9 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        $roles=Role::orderBy('id','desc')->with('')->get();
-        return $this->sendResponse($roles,'Role list fetched successfully!');
-    
+        $purchases = Purchase::orderBy('id', 'desc')->with('user', 'order_item', 'product')->get();
+        return $this->sendResponse($purchases, 'Purchase list fetched successfully!');
+
     }
 
     /**
@@ -32,22 +33,30 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'quantity' => 'required',
+            'invoice_numb' => 'required',
+            'unit' => 'required',
+            'date' => 'required',
+            'products_id' => 'required',
+            'users_id' => 'required',
+            'price' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles=Role::create($input);
-        return $this->sendResponse($roles, 'Role created successfully!');
+        $purchases = Purchase::create($input);
+        return $this->sendResponse($purchases, 'Purchase created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(string $id)
     {
-        //
+        $purchases = Purchase::with('user', 'order_item', 'product')->find($id);
+        return $this->sendResponse($purchases, 'Purchase list fetched successfully!');
+
     }
 
     /**
@@ -55,8 +64,9 @@ class PurchaseController extends Controller
      */
     public function edit(string $id)
     {
-        $roles=Role::find($id);
-        return $this->sendResponse($roles,'Role fetched successfully!');
+        $purchases = Purchase::with('user', 'order_item', 'product')->find($id);
+        return $this->sendResponse($purchases, 'Purchase list fetched successfully!');
+
     }
 
     /**
@@ -65,14 +75,20 @@ class PurchaseController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'quantity' => 'required',
+            'invoice_numb' => 'required',
+            'unit' => 'required',
+            'date' => 'required',
+            'products_id' => 'required',
+            'users_id' => 'required',
+            'price' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles = Role::find($id)->update($input);
-        return $this->sendResponse($roles, 'Role updated successfully!');
+        $purchases = Purchase::find($id)->update($input);
+        return $this->sendResponse($purchases, 'Purchase updated successfully!');
     }
 
     /**
@@ -80,8 +96,8 @@ class PurchaseController extends Controller
      */
     public function destroy(string $id)
     {
-        $roles = Role::find($id)->delete();
-        return $this->sendResponse($roles,'Role deleted successfully!');
+        $purchases = Purchase::find($id)->delete();
+        return $this->sendResponse($purchases, 'Purchase deleted successfully!');
     }
 }
 

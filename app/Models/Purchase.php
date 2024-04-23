@@ -15,4 +15,7 @@ class Purchase extends Model
     public function order_item(){
         return $this->hasMany(Order_item::class);
     }
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }

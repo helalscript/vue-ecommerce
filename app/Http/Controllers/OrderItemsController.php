@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order_items;
+use App\Models\Order_item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class OrderItemsController extends Controller
 {
     use ApiResponse;
@@ -13,9 +14,9 @@ class OrderItemsController extends Controller
      */
     public function index()
     {
-        $roles=Role::orderBy('id','desc')->with('')->get();
-        return $this->sendResponse($roles,'Role list fetched successfully!');
-    
+        $order_items = Order_item::orderBy('id', 'desc')->with('product', 'order')->get();
+        return $this->sendResponse($order_items, 'Order_item list fetched successfully!');
+
     }
 
     /**
@@ -32,22 +33,26 @@ class OrderItemsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'quantity' => 'required',
+            'products_id' => 'required',
+            'orders_id' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles=Role::create($input);
-        return $this->sendResponse($roles, 'Role created successfully!');
+        $order_items = Order_item::create($input);
+        return $this->sendResponse($order_items, 'Order_item created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(string $id)
     {
-        //
+        $order_items = Order_item::with('product', 'order')->find($id);
+        return $this->sendResponse($order_items, 'Order_item list fetched successfully!');
+
     }
 
     /**
@@ -55,8 +60,8 @@ class OrderItemsController extends Controller
      */
     public function edit(string $id)
     {
-        $roles=Role::find($id);
-        return $this->sendResponse($roles,'Role fetched successfully!');
+        $order_items = Order_item::with('product', 'order')->find($id);
+        return $this->sendResponse($order_items, 'Order_item list fetched successfully!');
     }
 
     /**
@@ -65,14 +70,16 @@ class OrderItemsController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'quantity' => 'required',
+            'products_id' => 'required',
+            'orders_id' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),422);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
         $input = $request->all();
-        $roles = Role::find($id)->update($input);
-        return $this->sendResponse($roles, 'Role updated successfully!');
+        $order_items = Order_item::find($id)->update($input);
+        return $this->sendResponse($order_items, 'Order_item updated successfully!');
     }
 
     /**
@@ -80,7 +87,7 @@ class OrderItemsController extends Controller
      */
     public function destroy(string $id)
     {
-        $roles = Role::find($id)->delete();
-        return $this->sendResponse($roles,'Role deleted successfully!');
+        $order_items = Order_item::find($id)->delete();
+        return $this->sendResponse($order_items, 'Order_item deleted successfully!');
     }
 }
